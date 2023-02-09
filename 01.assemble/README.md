@@ -24,4 +24,23 @@ ragtag.py scaffold tunisia_genomic.fna nd.asm.fasta
 #ragtag_output/ragtag.scaffold.fasta  FASTA   DNA         19  329,492,189  219,898  17,341,694.2  70,882,804
 
 
+bwa index ragtag.scaffold.fasta
+ 
+bwa mem -t 24 ragtag.scaffold.fasta \
+paired.end.fastq/YS_clean_R1.fq \
+paired.end.fastq/YS_clean_R2.fq | ~/anaconda3/envs/genomeAsemble/bin/samtools \
+sort -@ 24 -o ys.sorted.bam
+
+grep ">" ragtag.scaffold.fasta | awk 'gsub(">","")' > chr.list
+
+conda run -n genomeAsemble samtools index -@ 8 ys.sorted.bam
+python split_bam_by_chr_id.py --bam ys.sorted.bam --chrlist chr.list
+
+mkdir split.bam
+mv *.bam split.bam
+mv split.bam/ys.sorted.bam ./
+snakemake -s samtools_index.smk --cores 8 -p
+
+python split_fa_by_seq_id.py --fasta ragtag.scaffold.fasta --outputfoldeer split.fasta
+sbatch run_pilon.slurm
 ```
