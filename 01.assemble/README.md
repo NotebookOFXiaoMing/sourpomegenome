@@ -34,4 +34,21 @@ snakemake -s samtools_index.smk --cores 8 -p
 
 ####http://protocols.faircloth-lab.org/en/latest/protocols-computer/assembly/polishing-with-pilon.html
 sbatch run_pilon.slurm
+
+mkdir pilon.polished.fa
+cp pilon.polished/*.fasta pilon.polished.fa
+python merge_multi_contigs_to_one.py
+
+seqkit stats ys.pome.final.genome.fasta
+#file                        format  type  num_seqs      sum_len    min_len       avg_len     max_len
+#ys.pome.final.genome.fasta  FASTA   DNA          9  329,143,568  4,183,326  36,571,507.6  70,784,242
+
+seqkit seq ys.pome.final.genome.fasta -u -o ys.pome.final.genome_upper.fasta
+
+mkdir ys.final.genome
+mv ../ragtag_output/bwa.index/pilon.polished.fa/ys.pome.final.genome_upper.fasta ./ys.pome.final.genome.fasta
+
+conda activate repeat
+BuildDatabase -name pome ys.pome.final.genome.fasta
+RepeatModeler -database pome -pa 24 -LTRStruct 1>repeatmodeler.log 2>&1
 ```
