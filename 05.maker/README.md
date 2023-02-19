@@ -26,3 +26,7 @@ INFO	Results written in /data/myan/raw_data/pome/sour.pome/pomeGenome/ys.final.g
 EDTA
 
 EDTA.pl -genome ../03.braker2/ys.softmasking.genome.fa -species others -step all -t 8
+
+blast
+
+ blastn -query two.seq.pra.fa -db /home/sunj/Software/ncbi_database/nt/nt_DB -out novel.nt.blast -evalue 1e-5 -perc_identity 0.8 -task megablast -outfmt '6 std qcovs stitle staxid' -max_target_seqs 5 -num_threads 8
