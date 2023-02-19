@@ -30,3 +30,7 @@ EDTA.pl -genome ../03.braker2/ys.softmasking.genome.fa -species others -step all
 blast
 
  blastn -query two.seq.pra.fa -db /home/sunj/Software/ncbi_database/nt/nt_DB -out novel.nt.blast -evalue 1e-5 -perc_identity 0.8 -task megablast -outfmt '6 std qcovs stitle staxid' -max_target_seqs 5 -num_threads 8
+
+eggnog mapper
+
+emapper.py --cpu 20 --mp_start_method forkserver --data_dir /dev/shm/ -o out --output_dir /emapper_web_jobs/emapper_jobs/user_data/MM_tefs5h49 --temp_dir /emapper_web_jobs/emapper_jobs/user_data/MM_tefs5h49 --override -m diamond --dmnd_ignore_warnings -i /emapper_web_jobs/emapper_jobs/user_data/MM_tefs5h49/queries.fasta --evalue 0.001 --score 60 --pident 40 --query_cover 20 --subject_cover 20 --itype proteins --tax_scope auto --target_orthologs all --go_evidence non-electronic --pfam_realign none --report_orthologs --decorate_gff yes --excel > /emapper_web_jobs/emapper_jobs/user_data/MM_tefs5h49/emapper.out 2> /emapper_web_jobs/emapper_jobs/user_data/MM_tefs5h49/emapper.err
