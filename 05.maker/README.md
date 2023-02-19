@@ -27,6 +27,53 @@ EDTA
 
 EDTA.pl -genome ../03.braker2/ys.softmasking.genome.fa -species others -step all -t 8
 
+Sun Feb 19 16:13:05 CST 2023	Dependency checking:
+				All passed!
+
+Sun Feb 19 16:13:18 CST 2023	Obtain raw TE libraries using various structure-based programs: 
+Sun Feb 19 16:13:18 CST 2023	EDTA_raw: Check dependencies, prepare working directories.
+
+Sun Feb 19 16:13:24 CST 2023	Start to find LTR candidates.
+
+Sun Feb 19 16:13:24 CST 2023	Identify LTR retrotransposon candidates from scratch.
+
+Sun Feb 19 17:35:16 CST 2023	Finish finding LTR candidates.
+
+Sun Feb 19 17:35:16 CST 2023	Start to find TIR candidates.
+
+Sun Feb 19 17:35:16 CST 2023	Identify TIR candidates from scratch.
+
+Species: others
+Sun Feb 19 20:09:05 CST 2023	Finish finding TIR candidates.
+
+Sun Feb 19 20:09:05 CST 2023	Start to find Helitron candidates.
+
+Sun Feb 19 20:09:05 CST 2023	Identify Helitron candidates from scratch.
+
+Sun Feb 19 21:49:55 CST 2023	Finish finding Helitron candidates.
+
+Sun Feb 19 21:49:55 CST 2023	Execution of EDTA_raw.pl is finished!
+
+Sun Feb 19 21:49:55 CST 2023	Obtain raw TE libraries finished.
+				All intact TEs found by EDTA: 
+					ys.softmasking.genome.fa.mod.EDTA.intact.fa
+					ys.softmasking.genome.fa.mod.EDTA.intact.gff3
+
+Sun Feb 19 21:49:55 CST 2023	Perform EDTA advcance filtering for raw TE candidates and generate the stage 1 library: 
+
+Sun Feb 19 22:03:03 CST 2023	EDTA advcance filtering finished.
+
+Sun Feb 19 22:03:03 CST 2023	Perform EDTA final steps to generate a non-redundant comprehensive TE library:
+
+				Skipping the RepeatModeler step (--sensitive 0).
+				Run EDTA.pl --step final --sensitive 1 if you want to use RepeatModeler.
+
+				Skipping the CDS cleaning step (--cds [File]) since no CDS file is provided or it's empty.
+
+Sun Feb 19 22:14:03 CST 2023	EDTA final stage finished! You may check out:
+				The final EDTA TE library: ys.softmasking.genome.fa.mod.EDTA.TElib.fa
+
+
 blast
 
  blastn -query two.seq.pra.fa -db /home/sunj/Software/ncbi_database/nt/nt_DB -out novel.nt.blast -evalue 1e-5 -perc_identity 0.8 -task megablast -outfmt '6 std qcovs stitle staxid' -max_target_seqs 5 -num_threads 8
