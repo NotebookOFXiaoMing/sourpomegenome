@@ -81,3 +81,7 @@ blast
 eggnog mapper
 
 emapper.py --cpu 20 --mp_start_method forkserver --data_dir /dev/shm/ -o out --output_dir /emapper_web_jobs/emapper_jobs/user_data/MM_tefs5h49 --temp_dir /emapper_web_jobs/emapper_jobs/user_data/MM_tefs5h49 --override -m diamond --dmnd_ignore_warnings -i /emapper_web_jobs/emapper_jobs/user_data/MM_tefs5h49/queries.fasta --evalue 0.001 --score 60 --pident 40 --query_cover 20 --subject_cover 20 --itype proteins --tax_scope auto --target_orthologs all --go_evidence non-electronic --pfam_realign none --report_orthologs --decorate_gff yes --excel > /emapper_web_jobs/emapper_jobs/user_data/MM_tefs5h49/emapper.out 2> /emapper_web_jobs/emapper_jobs/user_data/MM_tefs5h49/emapper.err
+
+
+cat ys.all.maker.gff3 | awk '$2=="maker"{print}' > ys.all.maker01.gff3
+python igv_web.py -r ys.softmasking.genome.fa -g ys.all.maker01.gff3
