@@ -24,3 +24,6 @@ python ../Bhagwa/simple_seq_id.py --i Azerbaijan.fna --o Azerbaijan.01.fa
 snakemake -s rnaseq_pipeline.smk --cores 8 --configfile config.yaml --config ref=Azerbaijan.01.fa fq_folder=/data/myan/raw_data/pome/sour.pome/rnaseq/ fq_suffix=fastq.gz
 braker.pl --cores 16 --softmasking --genome=Azerbaijan.01.fa --bam=04.output.bam/SRR6905890.sorted.bam (不加--gff3参数输出gtf文件)
 ```
+
+conda run -n genomeAsemble gffread -g Bhagwa.01.fa -x cds.fa braker/braker.gtf
+
