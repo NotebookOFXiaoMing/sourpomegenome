@@ -10,7 +10,8 @@ java -jar ~/biotools/GeMoMa-1.9.jar CLI GeMoMaPipeline threads=8 outdir=output G
 
 Bhagwa 重新注释
 
+```
 python simple_seq_id.py --i Bhagwa.fna --o Bhagwa01.fa
-
 snakemake -s rnaseq_pipeline.smk --cores 8 --configfile config.yaml --config ref=Bhagwa.01.fa fq_folder=/data/myan/raw_data/pome/sour.pome/rnaseq/ fq_suffix=fastq.gz
-
+braker.pl --cores 8 --softmasking --gff3 --genome=Bhagwa.01.fa --bam=04.output.bam/SRR6905890.sorted.bam 晚上10点开始
+```
