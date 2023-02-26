@@ -27,3 +27,19 @@ braker.pl --cores 16 --softmasking --genome=Azerbaijan.01.fa --bam=04.output.bam
 
 conda run -n genomeAsemble gffread -g Bhagwa.01.fa -x cds.fa braker/braker.gtf
 
+braker2的输出结果太多，有4万多，查了一下有没有过滤的办法，找到链接 https://github.com/Gaius-Augustus/BRAKER/issues/319 这里提到有脚本可以过滤 https://github.com/Gaius-Augustus/BRAKER/tree/report/scripts/predictionAnalysis
+
+四个脚本都下载下来 
+
+用法
+
+python ../selectBraker2/selectSupportedSubsets.py --fullSupport fullsupport.gff --anySupport anysupport.gff --noSupport nosupport.gff braker/braker.gtf braker/hintsfile.gff
+
+anysupport.gff 里包含 fullsupport.gff 上面的链接提到会生成summary,但是我这边没有
+
+conda run -n genomeAsemble gffread -g Bhagwa.01.fa -x cds.fa anysupport.gff
+python ../trans_cds_to_pep.py --i cds.fa --o bhw.fa #Bhagwa22063 Asbj 20557
+
+
+
+
