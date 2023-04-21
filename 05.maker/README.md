@@ -1,8 +1,13 @@
 fasta_merge -d ys.softmasking.genome.maker.output/ys.softmasking.genome_master_datastore_index.log -o ys
+
 gff3_merge -d ys.softmasking.genome.maker.output/ys.softmasking.genome_master_datastore_index.log -o ys.all.maker.gff3
+
 maker_map_ids --prefix YS_ --justify 6 ys.all.maker.gff3 > all.id.map
+
 map_fasta_ids all.id.map ys.all.maker.proteins.fasta
+
 map_fasta_ids all.id.map ys.all.maker.transcripts.fasta
+
 map_gff_ids all.id.map ys.all.maker.gff3
 
 grep '>' ys.all.maker.proteins.fasta | wc -l
