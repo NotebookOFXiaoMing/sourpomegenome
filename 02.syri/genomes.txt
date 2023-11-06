@@ -1,2 +1,0 @@
-refgenome.fa	ref
-querygenome.fa	query
