@@ -1,0 +1,5 @@
+ref:
+  fa: "/data/myan/raw_data/pome/sour.pome/20231015.reanalysis/08.proteinCodingGenes/{genome}.final.masked.fna"
+rnaseq:
+  r1: "/data/myan/raw_data/pome/sour.pome/20231015.reanalysis/08.proteinCodingGenes/rnaseqReads/{rnaseq}_1.fastq.gz"
+  r2: "/data/myan/raw_data/pome/sour.pome/20231015.reanalysis/08.proteinCodingGenes/rnaseqReads/{rnaseq}_2.fastq.gz"

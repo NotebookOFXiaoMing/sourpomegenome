@@ -1,0 +1,2 @@
+bam: "/home/myan/my_data/raw_data/pome/sour.pome/20231015.reanalysis/08.proteinCodingGenes/02.transcriptome/02.merged.bam/{genome}/merged.bam"
+ref: "/data/myan/raw_data/pome/sour.pome/20231015.reanalysis/08.proteinCodingGenes/{genome}.final.masked.fna"
