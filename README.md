@@ -21,4 +21,37 @@ findGSE(histo = "pome.21mer.histo",size=21,outdir = "pome_21mer")
 
 ```
 sbatch run_nextDenovo.slurm
+
+samtools faidx ../01.nextdenovo/03.ctg_graph/nd.asm.fasta
+awk 'OFS="\t" {print $1,0,$2}' ../01.nextdenovo/03.ctg_graph/nd.asm.fasta.fai > nd.asm.fasta.bed
+
+minimap2 -x asm5 -t 8 pomeMito.fa ../01.nextdenovo/03.ctg_graph/nd.asm.fasta -o mito.paf
+awk 'OFS="\t" {print $1,$3,$4}' mito.paf > mito.paf.bed
+bedtools coverage -a nd.asm.fasta.bed -b mito.paf.bed > mito.paf.bed.cov 
+
+awk '{ if ($7>.5) print $1} ' mito.paf.bed.cov
+
+minimap2 -x asm5 -t 8 pomeCP.fa ../01.nextdenovo/03.ctg_graph/nd.asm.fasta -o cp.paf
+awk 'OFS="\t" {print $1,$3,$4}' cp.paf > cp.paf.bed
+bedtools coverage -a nd.asm.fasta.bed -b cp.paf.bed > cp.paf.bed.cov
+awk '{ if ($7>.5) print $1} ' cp.paf.bed.cov
+
+awk '{ if ($7>.5) print $1} ' ../02.pome_CP_Mito/mito.paf.bed.cov > cp_mito.ids
+awk '{ if ($7>.5) print $1} ' ../02.pome_CP_Mito/cp.paf.bed.cov >> cp_mito.ids
+
+seqkit grep -r -v -f cp_mito.ids ../01.nextdenovo/03.ctg_graph/nd.asm.fasta -o nd.asm.exclude.cpmito.fasta
+ragtag.py scaffold ../../pomeGenome/tunisia_genomic.fna nd.asm.exclude.cpmito.fasta -t 16
+
+
+minimap2 -x asm5 ../../pomeGenome/tunisia_genomic.fna ragtag_output/ragtag.scaffold.fasta -o dotplot.paf
+
+library(pafr)
+paf<-read_paf("dotplot.paf")
+pdf("dotplot.pdf")
+dotplot(paf)
+dev.off()
+
+python replaceChrID.py ragtag_output/ragtag.scaffold.fasta ids.txt ys.genome.fasta
+
+assembly-stats ys.genome.fasta
 ```
