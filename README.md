@@ -54,4 +54,104 @@ dev.off()
 python replaceChrID.py ragtag_output/ragtag.scaffold.fasta ids.txt ys.genome.fasta
 
 assembly-stats ys.genome.fasta
+
+seqkit seq -m 50000 ys.nanopore.fa -o ys.nanopore.larger50k.fa -j 24
+seqkit seq -m 100000 ys.nanopore.fa -o ys.nanopore.larger100k.fa -j 24
+
+
+time tgsgapcloser --scaff ../04.ragtag/ys.genome.fasta \
+--reads raw.reads/ys.nanopore.larger100k.fa --output tgsgapcloser_output \
+--racon /home/myan/anaconda3/envs/syri/bin/racon --thread 32
+
+assembly-stats tgsgapcloser_output.scaff_seqs
+
+~/biotools/NextPolish/nextPolish run.cfg
+
+python upperBase.py genome.nextpolish.upperbase.fasta genome.nextpolish.fasta
+```
+
+## 3. RepeatModelor + RepeatMasker
+```
+conda activate edta03
+BuildDatabase -name ys genome.nextpolish.upperbase.fasta
+RepeatModeler -database ys -threads 52 -LTRStruct
+
+conda activate DeepTE
+
+snakemake -s deepTE.smk --cores 4 -p
+grep "Unknown" ys-families.fa | wc -l # 1461
+grep "Unknown" 00.ys.rep.lib/ys-families.fa | wc -l ##551
+
+conda activate edta03
+RepeatMasker -e rmblast -pa 32 -qq -xsmall \
+-lib 00.ys.rep.lib/ys-families.fa genome.nextpolish.upperbase.fasta \
+-dir ys.repeatmasker
+```
+
+## 4. assembly quality
+
+```
+busco -i ../06.nextPolish/genome.nextpolish.upperbase.fasta -c 24 -o busco -m geno -l ~/my_data/database/embryophyta_odb10 --offline
+
+minimap2 -ax sr ../../06.nextPolish/genome.nextpolish.upperbase.fasta \
+../../../upload2ncbi/YS_clean_1.fq.gz \
+../../../upload2ncbi/YS_clean_2.fq.gz -t 32 > illumina.sam
+samtools sort -@ 16 -O BAM -o illumina.sorted.sam illumina.sam
+samtools flagstat -@ 16 illumina.sorted.sam
+
+minimap2 -ax sr ../../06.nextPolish/genome.nextpolish.upperbase.fasta \
+../../03.genomeSizeEstimate/unmap_unmap.R1.fq \
+../../03.genomeSizeEstimate/unmap_unmap.R2.fq -t 32 > unmap_cpMito_illumina.sam
+
+samtools sort -@ 16 -O BAM -o unmap_cpMito_illumina.sorted.bam unmap_cpMito_illumina.sam
+samtools flagstat -@ 16 unmap_cpMito_illumina.sorted.bam
+
+bwa index ../../06.nextPolish/genome.nextpolish.upperbase.fasta
+bwa mem -t 24 ../../06.nextPolish/genome.nextpolish.upperbase.fasta \
+../../03.genomeSizeEstimate/unmap_unmap.R1.fq \
+../../03.genomeSizeEstimate/unmap_unmap.R2.fq -o bwa_map.sam
+samtools sort -@ 16 -O BAM -o bwa_map.sorted.sam bwa_map.sam
+samtools flagstat -@ 16 bwa_map.sorted.sam
+
+minimap2 -ax map-ont ../../06.nextPolish/genome.nextpolish.upperbase.fasta ../../../upload2ncbi/ys.nanopore.fq.gz -t 8 > ont.sam
+samtools sort -@ 16 -O BAM -o ont.sorted.bam ont.sam
+samtools flagstat -@ 16 ont.sorted.bam
+
+meryl k=21 count output r1.meryl ../../03.genomeSizeEstimate/unmap_unmap.R1.fq
+meryl k=21 count output r2.meryl ../../03.genomeSizeEstimate/unmap_unmap.R2.fq
+
+meryl union-sum output r1_r2.meryl r1.meryl r2.meryl
+merqury.sh r1_r2.meryl ../../06.nextPolish/genome.nextpolish.upperbase.fasta out_prefix
+
+perl LTR_FINDER_parallel-1.1/LTR_FINDER_parallel \
+-seq ../../06.nextPolish/genome.nextpolish.upperbase.fasta -threads 32 -harvest_out
+
+LTR_retriever -threads 32 -genome \
+../../06.nextPolish/genome.nextpolish.upperbase.fasta \
+-inharvest genome.nextpolish.upperbase.fasta.finder.combine.scn
+
+LAI -t 32 -genome ../../06.nextPolish/genome.nextpolish.upperbase.fasta \
+-intact genome.nextpolish.upperbase.fasta.pass.list \
+-all genome.nextpolish.upperbase.fasta.out
+```
+
+## 5. genome annotation
+```
+conda activate rnaseq
+snakemake -s genomeAnnotationStep01.smk --configfiles=step01.yaml --cores 128 -pn
+
+conda activate braker2
+snakemake -s genomeAnnotationStep02.smk --configfiles step02.yaml --cores 64 -p #201m
+
+conda activate rnaseq
+snakemake -s genomeAnnotationStep03.smk --configfiles step03.yaml --cores 52 -p
+
+snakemake -s genomeAnnotationStep03_04.smk --configfiles step04.yaml --cores 24 -p
+
+conda activate EVM
+snakemake -s genomeAnnotationStep04.smk --configfiles step04.yaml --cores 52 -pn
+
+time emapper.py -i ../../08.proteinCodingGenes/05.evm/ys/ys.pep.fa -o ys --cpu 24 -m diamond
+
+interproscan.sh -i ../../08.proteinCodingGenes/05.evm/ys/ys.pep.fa -f tsv --goterms -dp -cpu 32 -o ys.interproscan.tsv
 ```
