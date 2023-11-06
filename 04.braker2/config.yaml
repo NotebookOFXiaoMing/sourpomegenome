@@ -1,3 +1,0 @@
-ref : "path of your reference genome"
-fq_folder : "path of folder containg raw fastq"
-fq_suffix : "suffix of fastq (fq.gz, fastq.gz, or fq and so on)"
